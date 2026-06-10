@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-  <meta name="apple-mobile-web-app-title" content="Eats &amp; Places"/>
-  <title>Eats &amp; Places</title>
+  <meta name="apple-mobile-web-app-title" content="My Travel App"/>
+  <title>My Travel App</title>
   <style>
     :root,[data-theme="light"]{
       --tx:clamp(.75rem,.7rem + .25vw,.875rem);
@@ -20,6 +20,7 @@
       --tx-c:#28251d;--tx-m:#6f6d67;--tx-f:#9e9b93;--tx-i:#f9f8f4;
       --pr:#01696f;--pr-h:#0c4e54;--pr-hl:#d0e5e3;
       --ok:#437a22;--ok-hl:#ddefd1;
+      --hm:#6b5194;--hm-hl:#e8e0f5;
       --wn:#964219;--wn-hl:#f5e2d4;
       --er:#a12c7b;
       --fd:#c45c00;--fd-hl:#fce8d5;
@@ -37,6 +38,7 @@
       --tx-c:#e3e1dc;--tx-m:#a9a6a0;--tx-f:#7f7c76;--tx-i:#1c1b19;
       --pr:#4f98a3;--pr-h:#66aab4;--pr-hl:#2c3839;
       --ok:#80b960;--ok-hl:#253520;
+      --hm:#a89bc8;--hm-hl:#2d2444;
       --wn:#d08d63;--wn-hl:#3d2a1a;
       --er:#d163a7;--fd:#e08040;--fd-hl:#3d2210;
       --sh-xs:0 1px 2px rgba(0,0,0,.25);--sh-s:0 2px 6px rgba(0,0,0,.3);--sh-m:0 8px 24px rgba(0,0,0,.4);
@@ -169,6 +171,39 @@
     .sec-head h3{font-size:var(--tx);font-weight:600;color:var(--tx-m);text-transform:uppercase;letter-spacing:.06em;}
     .divider{height:1px;background:var(--dv);margin:var(--s3) 0;}
 
+    /* countdown */
+    .countdown-card{background:linear-gradient(135deg,var(--pr) 0%,color-mix(in srgb,var(--pr) 80%,var(--bg)) 100%);color:var(--tx-i);padding:var(--s5);border-radius:var(--rl);margin-bottom:var(--s5);box-shadow:var(--sh-m);display:grid;gap:var(--s3);}
+    .countdown-card strong{font-size:var(--tx2);line-height:1.1;display:block;}
+    .countdown-card small{font-size:var(--ts);opacity:.85;display:block;}
+    .countdown-stat{display:grid;gap:.2rem;}
+    .countdown-stat span{font-size:var(--tx);opacity:.8;}
+
+    /* calendar */
+    .calendar-wrap{margin-bottom:var(--s5);}
+    .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--s4);font-weight:600;}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--s2);margin-bottom:var(--s4);width:100%;}
+    #calDays{display:contents;}
+    .cal-dow{text-align:center;font-size:var(--tx);font-weight:600;color:var(--tx-m);padding:var(--s2) 0;text-transform:uppercase;letter-spacing:.05em;}
+    .cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--rm);border:1px solid var(--br);background:var(--sf);font-size:var(--ts);position:relative;cursor:default;min-height:60px;}
+    .cal-day.other{opacity:.3;}
+    .cal-day.today{border:2px solid var(--pr);font-weight:700;}
+    .cal-day.fly{border:2px solid #999;background:#e8e8e8;font-weight:700;color:#333;}
+    .cal-day.fly.dark{background:#3a3a3a;color:#ccc;}
+    .cal-day.has-entry{background:var(--pr-hl);border-color:var(--pr);}
+    .cal-day.camili{background:#e8d5ff;border-color:#9966cc;}
+    .cal-day.yagcilar{background:#fffacd;border-color:#d4a017;}
+    .cal-day.camili.fly,.cal-day.yagcilar.fly{background:#e8e8e8;border-color:#999;color:#333;}
+    .cal-day.camili.fly.dark,.cal-day.yagcilar.fly.dark{background:#3a3a3a;color:#ccc;}
+    .cal-day-num{display:block;font-weight:600;}
+    .cal-day-dot{display:flex;gap:2px;margin-top:2px;flex-wrap:wrap;justify-content:center;}
+    .dot{width:4px;height:4px;border-radius:50%;display:inline-block;}
+    .dot-food{background:var(--fd);}
+    .dot-visit{background:var(--pr);}
+    .dot-stay{background:var(--ok);}
+    .dot-camili{background:#9966cc;}
+    .dot-yagcilar{background:#d4a017;}
+    .dot-upcoming{background:var(--wn);}
+
     /* empty */
     .empty{padding:var(--s12) var(--s8);text-align:center;border:1px dashed var(--br);border-radius:var(--rl);color:var(--tx-m);}
     .empty-icon{font-size:2rem;margin-bottom:var(--s2);}
@@ -192,14 +227,13 @@
 <header class="topbar">
   <div class="brand">
     <div class="logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M3 11l9-9 9 9"/><path d="M9 22V12h6v10"/>
-        <circle cx="19" cy="7" r="3" fill="currentColor" stroke="none"/>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2c2 0 4 2 4 4s-2 4-4 4-4-2-4-4 2-4 4-4" fill="currentColor" opacity="0.3"/><path d="M12 6c1 0 2 1 2 2s-1 2-2 2-2-1-2-2 1-2 2-2" fill="currentColor"/><path d="M5 10c-1 0-2 1-2 2v8c0 2 2 4 4 4h10c2 0 4-2 4-4v-8c0-1-1-2-2-2"/><path d="M9 14h6" stroke-width="1.5"/><path d="M9 18h6" stroke-width="1.5"/>
       </svg>
     </div>
     <div class="brand-text">
-      <strong>Eats &amp; Places</strong>
-      <small>Food &amp; travel tracker</small>
+      <strong>My Travel App</strong>
+      <small>Trip & memory log</small>
     </div>
   </div>
   <button class="btn btn-icon btn-ghost" id="themeBtn" aria-label="Toggle theme">
@@ -210,12 +244,24 @@
 
 <nav class="tabs" role="tablist">
   <button class="tab active" role="tab" data-tab="log">📍 Trip Log <span class="tab-count" id="logCount">0</span></button>
+  <button class="tab" role="tab" data-tab="calendar">📅 Calendar</button>
   <button class="tab" role="tab" data-tab="togo">🍜 To-Go List <span class="tab-count" id="togoCount">0</span></button>
+  <button class="tab" role="tab" data-tab="todo">✓ To-Do <span class="tab-count" id="todoCount">0</span></button>
 </nav>
 
 <!-- LOG -->
 <div class="page active" id="page-log">
   <div class="page-inner">
+    <div class="countdown-card">
+      <div class="countdown-stat">
+        <strong id="countdownDays">0</strong>
+        <span>days until flight</span>
+      </div>
+      <div class="countdown-stat">
+        <small id="countdownDate">July 11, 2026</small>
+      </div>
+    </div>
+
     <div class="stats">
       <div class="stat"><strong id="sDays">0</strong><span>Days</span></div>
       <div class="stat"><strong id="sPlaces">0</strong><span>Places</span></div>
@@ -274,6 +320,37 @@
   </div>
 </div>
 
+<!-- CALENDAR -->
+<div class="page" id="page-calendar">
+  <div class="page-inner">
+    <div class="calendar-wrap">
+      <div class="cal-head">
+        <strong id="calMonth" style="font-size:var(--tl);">June 2026</strong>
+        <div>
+          <button class="btn btn-ghost" id="calPrev" style="font-size:var(--tx);padding:.4rem .7rem;min-height:32px;">←</button>
+          <button class="btn btn-ghost" id="calNext" style="font-size:var(--tx);padding:.4rem .7rem;min-height:32px;">→</button>
+        </div>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-dow">Sun</div><div class="cal-dow">Mon</div><div class="cal-dow">Tue</div>
+        <div class="cal-dow">Wed</div><div class="cal-dow">Thu</div><div class="cal-dow">Fri</div><div class="cal-dow">Sat</div>
+        <div id="calDays"></div>
+      </div>
+    </div>
+    <div class="sec-head" style="margin-top:var(--s5);">
+      <h3>Legend</h3>
+    </div>
+    <div style="display:grid;gap:var(--s3);font-size:var(--ts);">
+      <div style="display:flex;align-items:center;gap:var(--s3);"><div style="width:20px;height:20px;border-radius:var(--rm);background:var(--fd-hl);border:1px solid var(--fd);"></div>Food</div>
+      <div style="display:flex;align-items:center;gap:var(--s3);"><div style="width:20px;height:20px;border-radius:var(--rm);background:var(--pr-hl);border:1px solid var(--pr);"></div>Visit</div>
+      <div style="display:flex;align-items:center;gap:var(--s3);"><div style="width:20px;height:20px;border-radius:var(--rm);background:var(--ok-hl);border:1px solid var(--ok);"></div>Stayed (other place)</div>
+      <div style="display:flex;align-items:center;gap:var(--s3);"><div style="width:20px;height:20px;border-radius:var(--rm);background:#e8d5ff;border:1px solid #9966cc;"></div>Stayed at Camili</div>
+      <div style="display:flex;align-items:center;gap:var(--s3);"><div style="width:20px;height:20px;border-radius:var(--rm);background:#fffacd;border:1px solid #d4a017;"></div>Stayed at Yagcilar</div>
+      <div style="display:flex;align-items:center;gap:var(--s3);"><div style="width:20px;height:20px;border-radius:var(--rm);background:#e8e8e8;border:2px solid #999;"></div>Flight day (July 11)</div>
+    </div>
+  </div>
+</div>
+
 <!-- TO-GO -->
 <div class="page" id="page-togo">
   <div class="page-inner">
@@ -290,14 +367,31 @@
   </div>
 </div>
 
+<!-- TO-DO -->
+<div class="page" id="page-todo">
+  <div class="page-inner">
+    <div class="sec-head">
+      <h3>To-Do</h3>
+      <button class="btn btn-ghost" id="clearDoneTodo" style="font-size:var(--tx);padding:.4rem .7rem;min-height:32px;">Clear done</button>
+    </div>
+    <div class="togo-form">
+      <input type="text" id="todoInput" placeholder="Task…" autocomplete="off" autocorrect="off">
+      <button class="btn btn-primary" id="todoAdd">Add</button>
+    </div>
+    <div class="togo-list" id="todoList"></div>
+  </div>
+</div>
+
 <div class="pill" id="pill">Saved ✓</div>
 
 <script>
 (function(){
-  const K={log:'ep-log-v1',togo:'ep-togo-v1',theme:'ep-theme-v1'};
+  const K={log:'ep-log-v1',togo:'ep-togo-v1',theme:'ep-theme-v1',todo:'ep-todo-v1'};
   const QUICK_STAYS=['Camili','Yagcilar'];
-  let log=[],togo=[],selType='food';
+  const FLIGHT_DATE=new Date('2026-07-11');
+  let log=[],togo=[],todo=[],selType='food';
   const root=document.documentElement;
+  let calMonth=new Date();
 
   /* ─ storage ─ */
   function ls(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -318,12 +412,65 @@
     applyTheme(n);ls(K.theme,n);
   });
 
+  /* ─ countdown ─ */
+  function updateCountdown(){
+    const now=new Date();
+    now.setHours(0,0,0,0);
+    const diff=FLIGHT_DATE-now;
+    const days=Math.max(0,Math.ceil(diff/(1000*60*60*24)));
+    document.getElementById('countdownDays').textContent=days;
+    document.getElementById('countdownDate').textContent=FLIGHT_DATE.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  }
+
+  /* ─ calendar ─ */
+  function renderCalendar(){
+    const y=calMonth.getFullYear(),m=calMonth.getMonth();
+    document.getElementById('calMonth').textContent=calMonth.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+    const first=new Date(y,m,1);
+    const last=new Date(y,m+1,0);
+    const startDay=first.getDay();
+    const days=[];
+    for(let i=0;i<startDay;i++){const d=new Date(y,m,-startDay+i+1);days.push({date:d,other:true});}
+    for(let i=1;i<=last.getDate();i++){days.push({date:new Date(y,m,i),other:false});}
+    while(days.length%7)days.push({date:new Date(y,m+1,days.length-last.getDate()),other:true});
+    const logByDate={};
+    log.forEach(e=>{if(!logByDate[e.date])logByDate[e.date]=[];logByDate[e.date].push(e);});
+    const html=days.map(d=>{
+      const dStr=d.date.toISOString().split('T')[0];
+      const entries=logByDate[dStr]||[];
+      const isFly=dStr==='2026-07-11';
+      const isToday=dStr===new Date().toISOString().split('T')[0];
+      const camiliStay=entries.some(e=>e.type==='stay'&&e.place==='Camili');
+      const yagcilarStay=entries.some(e=>e.type==='stay'&&e.place==='Yagcilar');
+      let cls='cal-day';
+      if(d.other)cls+=' other';
+      if(isToday)cls+=' today';
+      if(camiliStay)cls+=' camili';
+      if(yagcilarStay)cls+=' yagcilar';
+      if(isFly)cls+=' fly';
+      else if(entries.length&&!camiliStay&&!yagcilarStay)cls+=' has-entry';
+      const types=entries.map(e=>{
+        if(e.type==='stay'&&e.place==='Camili')return 'camili';
+        if(e.type==='stay'&&e.place==='Yagcilar')return 'yagcilar';
+        return e.type;
+      });
+      const uniqueTypes=[...new Set(types)];
+      const dots=uniqueTypes.map(t=>`<span class="dot dot-${t}"></span>`).join('');
+      return`<div class="${cls}"><span class="cal-day-num">${d.date.getDate()}</span>${dots?'<div class="cal-day-dot">'+dots+'</div>':''}</div>`;
+    }).join('');
+    document.getElementById('calDays').innerHTML=html;
+  }
+
+  document.getElementById('calPrev').addEventListener('click',()=>{calMonth.setMonth(calMonth.getMonth()-1);renderCalendar();});
+  document.getElementById('calNext').addEventListener('click',()=>{calMonth.setMonth(calMonth.getMonth()+1);renderCalendar();});
+
   /* ─ tabs ─ */
   document.querySelectorAll('.tab').forEach(t=>{
     t.addEventListener('click',()=>{
       document.querySelectorAll('.tab,.page').forEach(el=>el.classList.remove('active'));
       t.classList.add('active');
       document.getElementById('page-'+t.dataset.tab).classList.add('active');
+      if(t.dataset.tab==='calendar')renderCalendar();
     });
   });
 
@@ -354,6 +501,7 @@
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
   function renderLog(){
+    updateCountdown();
     const tl=document.getElementById('timeline');
     document.getElementById('logCount').textContent=log.length;
     document.getElementById('sPlaces').textContent=log.length;
@@ -453,12 +601,51 @@
   document.getElementById('tArea').addEventListener('keydown',e=>{if(e.key==='Enter')addTogo();});
   document.getElementById('clearDone').addEventListener('click',()=>{togo=togo.filter(i=>!i.done);ls(K.togo,togo);toast();renderTogo();});
 
+  /* ─ todo ─ */
+  function renderTodo(){
+    const list=document.getElementById('todoList');
+    const pending=todo.filter(i=>!i.done);
+    document.getElementById('todoCount').textContent=pending.length;
+    if(!todo.length){list.innerHTML='<div class="empty"><div class="empty-icon">✓</div><p>Your to-do list is empty. Add tasks above.</p></div>';return;}
+    const ri=item=>`<div class="togo-item${item.done?' done':''}" data-ttid="${item.id}">
+      <button class="check${item.done?' checked':''}" data-tchk="${item.id}" aria-label="Mark done">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+      </button>
+      <div class="tname">${esc(item.task)}</div>
+      <button class="del-btn" data-ttdel="${item.id}" aria-label="Delete">✕</button>
+    </div>`;
+    const done=todo.filter(i=>i.done);
+    list.innerHTML=pending.map(ri).join('')+(done.length?'<div class="divider"></div>'+done.map(ri).join(''):'');
+    list.querySelectorAll('[data-tchk]').forEach(b=>{
+      b.addEventListener('click',()=>{const i=todo.find(x=>x.id===b.dataset.tchk);if(i){i.done=!i.done;ls(K.todo,todo);renderTodo();}});
+    });
+    list.querySelectorAll('[data-ttdel]').forEach(b=>{
+      b.addEventListener('click',()=>{todo=todo.filter(i=>i.id!==b.dataset.ttdel);ls(K.todo,todo);toast();renderTodo();});
+    });
+  }
+
+  function addTodo(){
+    const task=document.getElementById('todoInput').value.trim();
+    if(!task){document.getElementById('todoInput').focus();return;}
+    todo.unshift({id:crypto.randomUUID(),task,done:false});
+    ls(K.todo,todo);toast();
+    document.getElementById('todoInput').value='';
+    renderTodo();
+  }
+  document.getElementById('todoAdd').addEventListener('click',addTodo);
+  document.getElementById('todoInput').addEventListener('keydown',e=>{if(e.key==='Enter')addTodo();});
+  document.getElementById('clearDoneTodo').addEventListener('click',()=>{todo=todo.filter(i=>!i.done);ls(K.todo,todo);toast();renderTodo();});
+
   /* ─ init ─ */
   log=ll(K.log)||[];
   togo=ll(K.togo)||[];
+  todo=ll(K.todo)||[];
   document.getElementById('logDate').value=new Date().toISOString().split('T')[0];
+  updateCountdown();
   renderLog();
   renderTogo();
+  renderTodo();
+  renderCalendar();
 })();
 </script>
 </body>
