@@ -1,13 +1,13 @@
 # Travel App Agent Guide
 
-Use this workspace as a tiny, static, single-file web app. The functional source of truth is [eats-places.html](eats-places.html), and the handover context lives in [eats-places-handover.md](eats-places-handover.md).
+Use this workspace as a tiny, static, single-file web app. The functional source of truth is [index.html](index.html), and the handover context lives in [eats-places-handover.md](eats-places-handover.md).
 
 ## Project Shape
 
 - Treat the app as plain HTML, CSS, and vanilla JavaScript only.
 - There is no build step, package manager, backend, or shared data store.
 - All persistent data lives in browser `localStorage`.
-- Keep changes self-contained in `eats-places.html` unless you are updating project instructions.
+- Keep changes self-contained in `index.html` unless you are updating project instructions.
 
 ## Non-Obvious Rules
 
@@ -26,5 +26,5 @@ Use this workspace as a tiny, static, single-file web app. The functional source
 
 ## Deployment Notes
 
-- For deployment, the handover expects `eats-places.html` to be renamed to `index.html`.
+- For deployment, keep the app entry file named `index.html` at repository root.
 - If you need the full product context before editing, read [eats-places-handover.md](eats-places-handover.md) first.

@@ -22,7 +22,7 @@ The primary use case is **food exploration** (restaurants, cafes, local spots) d
 ## Current State of the App
 
 ### File
-- Filename: `eats-places.html` (rename to `index.html` for deployment)
+- Filename: `index.html`
 - Single HTML file — all CSS, JS, and markup are inline
 - No external dependencies (uses `-apple-system` font stack, no CDN)
 - Fully offline-capable once loaded in browser
@@ -114,11 +114,10 @@ Tapping either button:
 - Alternative: **Netlify Drop** (app.netlify.com/drop) — no account needed, drag and drop
 
 ### Deploy Steps
-1. Rename `eats-places.html` → `index.html`
-2. Go to vercel.com → Add New Project → drag and drop `index.html`
-3. Vercel generates a live URL (e.g. `https://eats-places.vercel.app`)
-4. Open the URL on iPhone in Safari
-5. Tap Share → Add to Home Screen
+1. Go to vercel.com → Add New Project → import the GitHub repo or drag and drop `index.html`
+2. Vercel generates a live URL (e.g. `https://eats-places.vercel.app`)
+3. Open the URL on iPhone in Safari
+4. Tap Share → Add to Home Screen
 
 ### iPhone Usage Rule
 - Must be opened from the **Home Screen shortcut**, not from the Files app
@@ -153,7 +152,7 @@ These have not been requested but may come up:
 
 ## How to Resume Development with Claude
 
-When continuing work, paste this document into a new Claude conversation and attach the latest `eats-places.html` file. Then describe what you want to change. Example prompt:
+When continuing work, paste this document into a new Claude conversation and attach the latest `index.html` file. Then describe what you want to change. Example prompt:
 
 > "Here is my Eats & Places travel and food tracker handover doc, and the current HTML file is attached. I want to [describe the change]."
 
