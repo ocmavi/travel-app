@@ -236,15 +236,13 @@
       <small>Trip & memory log</small>
     </div>
   </div>
-  <button class="btn btn-icon btn-ghost" id="themeBtn" aria-label="Toggle theme">
-    <svg id="iSun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    <svg id="iMoon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <button class="btn btn-icon btn-ghost" id="calOpenBtn" aria-label="View calendar">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
   </button>
 </header>
 
 <nav class="tabs" role="tablist">
   <button class="tab active" role="tab" data-tab="log">📍 Trip Log <span class="tab-count" id="logCount">0</span></button>
-  <button class="tab" role="tab" data-tab="calendar">📅 Calendar</button>
   <button class="tab" role="tab" data-tab="togo">🍜 To-Go List <span class="tab-count" id="togoCount">0</span></button>
   <button class="tab" role="tab" data-tab="todo">✓ To-Do <span class="tab-count" id="todoCount">0</span></button>
 </nav>
@@ -323,6 +321,9 @@
 <!-- CALENDAR -->
 <div class="page" id="page-calendar">
   <div class="page-inner">
+    <div style="display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s5);">
+      <button class="btn btn-ghost" id="calClose" style="font-size:var(--tx);padding:.4rem .7rem;min-height:32px;">← Back</button>
+    </div>
     <div class="calendar-wrap">
       <div class="cal-head">
         <strong id="calMonth" style="font-size:var(--tl);">June 2026</strong>
@@ -401,16 +402,7 @@
   function toast(){const p=document.getElementById('pill');p.classList.add('show');clearTimeout(p._t);p._t=setTimeout(()=>p.classList.remove('show'),1800);}
 
   /* ─ theme ─ */
-  function applyTheme(t){
-    root.setAttribute('data-theme',t);
-    document.getElementById('iSun').style.display=t==='dark'?'':'none';
-    document.getElementById('iMoon').style.display=t==='dark'?'none':'';
-  }
-  (function(){const s=ll(K.theme);applyTheme(s||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));})();
-  document.getElementById('themeBtn').addEventListener('click',()=>{
-    const n=root.getAttribute('data-theme')==='dark'?'light':'dark';
-    applyTheme(n);ls(K.theme,n);
-  });
+  root.setAttribute('data-theme','light');
 
   /* ─ countdown ─ */
   function updateCountdown(){
@@ -470,8 +462,20 @@
       document.querySelectorAll('.tab,.page').forEach(el=>el.classList.remove('active'));
       t.classList.add('active');
       document.getElementById('page-'+t.dataset.tab).classList.add('active');
-      if(t.dataset.tab==='calendar')renderCalendar();
     });
+  });
+
+  /* ─ calendar button ─ */
+  document.getElementById('calOpenBtn').addEventListener('click',()=>{
+    document.querySelectorAll('.tab,.page').forEach(el=>el.classList.remove('active'));
+    document.getElementById('page-calendar').classList.add('active');
+    renderCalendar();
+  });
+  document.getElementById('calClose').addEventListener('click',()=>{
+    document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+    document.getElementById('page-log').classList.add('active');
+    document.querySelector('.tab[data-tab="log"]').classList.add('active');
   });
 
   /* ─ type chips ─ */
