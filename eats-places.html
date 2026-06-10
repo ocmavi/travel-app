@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Eats &amp; Places"/>
+  <title>Eats &amp; Places</title>
+  <style>
+    :root,[data-theme="light"]{
+      --tx:clamp(.75rem,.7rem + .25vw,.875rem);
+      --ts:clamp(.875rem,.8rem + .35vw,1rem);
+      --tb:clamp(1rem,.95rem + .25vw,1.125rem);
+      --tl:clamp(1.125rem,1rem + .75vw,1.5rem);
+      --tx2:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+      --s1:.25rem;--s2:.5rem;--s3:.75rem;--s4:1rem;--s5:1.25rem;--s6:1.5rem;--s8:2rem;--s12:3rem;
+      --bg:#f7f6f2;--sf:#f9f8f5;--sf2:#ffffff;--sfo:#edeae5;
+      --br:#d4d1ca;--dv:#dcd9d5;
+      --tx-c:#28251d;--tx-m:#6f6d67;--tx-f:#9e9b93;--tx-i:#f9f8f4;
+      --pr:#01696f;--pr-h:#0c4e54;--pr-hl:#d0e5e3;
+      --ok:#437a22;--ok-hl:#ddefd1;
+      --wn:#964219;--wn-hl:#f5e2d4;
+      --er:#a12c7b;
+      --fd:#c45c00;--fd-hl:#fce8d5;
+      --rr:.5rem;--rm:.75rem;--rl:1rem;--rx:1.25rem;--rf:9999px;
+      --sh-xs:0 1px 2px rgba(0,0,0,.04);
+      --sh-s:0 2px 6px rgba(0,0,0,.06);
+      --sh-m:0 8px 24px rgba(0,0,0,.09);
+      --tr:180ms cubic-bezier(.16,1,.3,1);
+      --safe-b:env(safe-area-inset-bottom,0px);
+      --safe-t:env(safe-area-inset-top,0px);
+    }
+    [data-theme="dark"]{
+      --bg:#171614;--sf:#1c1b19;--sf2:#201f1d;--sfo:#262421;
+      --br:#393836;--dv:#2a2927;
+      --tx-c:#e3e1dc;--tx-m:#a9a6a0;--tx-f:#7f7c76;--tx-i:#1c1b19;
+      --pr:#4f98a3;--pr-h:#66aab4;--pr-hl:#2c3839;
+      --ok:#80b960;--ok-hl:#253520;
+      --wn:#d08d63;--wn-hl:#3d2a1a;
+      --er:#d163a7;--fd:#e08040;--fd-hl:#3d2210;
+      --sh-xs:0 1px 2px rgba(0,0,0,.25);--sh-s:0 2px 6px rgba(0,0,0,.3);--sh-m:0 8px 24px rgba(0,0,0,.4);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{-webkit-text-size-adjust:none;text-size-adjust:none;scroll-behavior:smooth;}
+    body{
+      font:400 var(--tb)/1.6 -apple-system,'Helvetica Neue',sans-serif;
+      color:var(--tx-c);background:var(--bg);
+      min-height:100dvh;
+      padding-bottom:calc(var(--safe-b) + 72px);
+      padding-top:var(--safe-t);
+    }
+    button,input,textarea,select{font:inherit;color:inherit;}
+    img{display:block;max-width:100%;}
+
+    /* topbar */
+    .topbar{
+      position:sticky;top:0;z-index:100;
+      display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+      padding:var(--s4) var(--s5);
+      background:color-mix(in srgb,var(--bg) 85%,transparent);
+      -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--dv);
+    }
+    .brand{display:flex;align-items:center;gap:var(--s3);}
+    .logo{width:38px;height:38px;border-radius:10px;background:var(--pr);display:grid;place-items:center;flex-shrink:0;}
+    .logo svg{width:22px;height:22px;color:#fff;}
+    .brand-text strong{font-size:var(--tb);font-weight:700;line-height:1.2;display:block;}
+    .brand-text small{font-size:var(--tx);color:var(--tx-m);}
+
+    /* buttons */
+    .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.7rem 1rem;min-height:44px;border-radius:var(--rm);border:1px solid var(--br);background:var(--sf);color:var(--tx-c);cursor:pointer;font-size:var(--ts);transition:all var(--tr);}
+    .btn:active{opacity:.7;}
+    .btn-primary{background:var(--pr);color:var(--tx-i);border-color:transparent;}
+    .btn-primary:active{background:var(--pr-h);}
+    .btn-icon{width:44px;padding:0;justify-content:center;}
+    .btn-ghost{background:transparent;border-color:transparent;color:var(--tx-m);}
+    .btn-ghost:active{background:var(--sfo);}
+
+    /* tabs */
+    .tabs{display:flex;border-bottom:1px solid var(--dv);padding:0 var(--s4);gap:var(--s1);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+    .tabs::-webkit-scrollbar{display:none;}
+    .tab{padding:var(--s3) var(--s4);font-size:var(--ts);font-weight:500;cursor:pointer;background:none;border:none;color:var(--tx-m);border-bottom:2px solid transparent;white-space:nowrap;transition:all var(--tr);}
+    .tab.active{color:var(--pr);border-bottom-color:var(--pr);}
+    .tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 .3rem;border-radius:var(--rf);background:var(--sfo);font-size:var(--tx);color:var(--tx-m);margin-left:.4rem;}
+    .tab.active .tab-count{background:var(--pr-hl);color:var(--pr);}
+
+    /* pages */
+    .page{display:none;padding:var(--s5) var(--s4);}
+    .page.active{display:block;}
+    .page-inner{max-width:680px;margin:0 auto;}
+
+    /* stats */
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);margin-bottom:var(--s5);}
+    .stat{padding:var(--s4);border:1px solid var(--br);border-radius:var(--rl);background:var(--sf);}
+    .stat strong{display:block;font-size:var(--tl);line-height:1.1;}
+    .stat span{font-size:var(--tx);color:var(--tx-m);}
+
+    /* form */
+    .form-card{background:var(--sf);border:1px solid var(--br);border-radius:var(--rx);padding:var(--s5);box-shadow:var(--sh-s);margin-bottom:var(--s5);}
+    .form-grid{display:grid;gap:var(--s4);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);}
+    label{display:grid;gap:var(--s2);font-size:var(--ts);font-weight:500;}
+    .lbl-sub{font-weight:400;color:var(--tx-m);}
+    input,textarea,select{width:100%;padding:.85rem .95rem;border-radius:var(--rm);border:1px solid var(--br);background:var(--sf2);color:var(--tx-c);font-size:var(--tb);outline:none;-webkit-appearance:none;appearance:none;transition:border-color var(--tr),box-shadow var(--tr);}
+    input:focus,textarea:focus,select:focus{border-color:var(--pr);box-shadow:0 0 0 3px color-mix(in srgb,var(--pr) 18%,transparent);}
+    textarea{min-height:80px;resize:vertical;}
+    select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236f6d67' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .85rem center;padding-right:2.5rem;}
+
+    /* quick place buttons */
+    .quick-row{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s2);}
+    .qbtn{padding:.55rem .9rem;min-height:40px;border-radius:var(--rf);border:1px solid var(--br);background:var(--sf);font-size:var(--tx);cursor:pointer;transition:all var(--tr);}
+    .qbtn:active,.qbtn.sel{background:var(--pr-hl);border-color:var(--pr);color:var(--pr);}
+    .quick-summary{margin-top:var(--s3);padding:var(--s4);border:1px solid var(--br);border-radius:var(--rl);background:var(--sf2);display:grid;gap:var(--s3);}
+    .quick-summary-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;}
+    .quick-summary-head strong{font-size:var(--ts);font-weight:600;display:block;}
+    .quick-summary-head span{font-size:var(--tx);color:var(--tx-m);}
+    .quick-summary-total{font-size:var(--tl);font-weight:700;color:var(--pr);line-height:1;}
+    .quick-summary-total small{display:block;font-size:var(--tx);font-weight:500;color:var(--tx-m);margin-top:.2rem;}
+    .quick-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2);}
+    .quick-record{padding:.75rem .85rem;border-radius:var(--rm);border:1px solid color-mix(in srgb,var(--br) 70%,transparent);background:var(--sf);display:grid;gap:.2rem;}
+    .quick-record strong{font-size:var(--ts);}
+    .quick-record span{font-size:var(--tx);color:var(--tx-m);}
+    .quick-summary-empty{padding:.9rem 1rem;border-radius:var(--rm);border:1px dashed var(--br);background:var(--sf);color:var(--tx-m);font-size:var(--tx);}
+
+    /* type chips */
+    .type-chips{display:flex;gap:var(--s2);flex-wrap:wrap;}
+    .tchip{padding:.55rem .9rem;min-height:40px;border-radius:var(--rf);border:1px solid var(--br);background:var(--sf);font-size:var(--tx);cursor:pointer;transition:all var(--tr);}
+    .tchip[data-val="food"].sel{background:var(--fd-hl);border-color:var(--fd);color:var(--fd);}
+    .tchip[data-val="visit"].sel{background:var(--pr-hl);border-color:var(--pr);color:var(--pr);}
+    .tchip[data-val="stay"].sel{background:var(--ok-hl);border-color:var(--ok);color:var(--ok);}
+    .tchip[data-val="next"].sel{background:var(--wn-hl);border-color:var(--wn);color:var(--wn);}
+
+    /* timeline */
+    .timeline{display:grid;gap:var(--s4);}
+    .day-card{border:1px solid var(--br);border-radius:var(--rl);background:var(--sf);overflow:hidden;}
+    .day-head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s3);padding:var(--s4);border-bottom:1px solid var(--dv);flex-wrap:wrap;}
+    .day-date strong{font-weight:700;}
+    .day-date small{display:block;font-size:var(--tx);color:var(--tx-m);}
+    .badges{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center;}
+    .badge{display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .6rem;border-radius:var(--rf);font-size:var(--tx);}
+    .bf{background:var(--fd-hl);color:var(--fd);}
+    .bv{background:var(--pr-hl);color:var(--pr);}
+    .bs{background:var(--ok-hl);color:var(--ok);}
+    .bn{background:var(--wn-hl);color:var(--wn);}
+    .day-body{padding:var(--s4);display:grid;gap:var(--s2);}
+    .place-item{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:.8rem .9rem;border-radius:var(--rm);background:var(--sf2);border:1px solid color-mix(in srgb,var(--br) 70%,transparent);}
+    .place-info{display:grid;gap:.15rem;min-width:0;flex:1;}
+    .place-info strong{font-size:var(--ts);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .place-info small{font-size:var(--tx);color:var(--tx-m);}
+    .del-btn{width:36px;height:36px;border-radius:var(--rm);border:1px solid var(--br);background:transparent;cursor:pointer;color:var(--tx-f);font-size:.9rem;display:grid;place-items:center;flex-shrink:0;transition:all var(--tr);}
+    .del-btn:active{background:color-mix(in srgb,var(--er) 15%,transparent);color:var(--er);}
+
+    /* togo */
+    .togo-form{display:flex;gap:var(--s3);margin-bottom:var(--s4);flex-wrap:wrap;}
+    .togo-form input{flex:1;min-width:140px;}
+    .togo-form .area-input{max-width:160px;}
+    .togo-list{display:grid;gap:var(--s2);}
+    .togo-item{display:flex;align-items:center;gap:var(--s3);padding:.85rem var(--s4);border-radius:var(--rm);background:var(--sf);border:1px solid var(--br);transition:opacity var(--tr);}
+    .togo-item.done{opacity:.45;}
+    .togo-item.done .tname{text-decoration:line-through;color:var(--tx-m);}
+    .check{width:24px;height:24px;border-radius:7px;border:1.5px solid var(--br);background:var(--sf2);cursor:pointer;display:grid;place-items:center;flex-shrink:0;transition:all var(--tr);}
+    .check.checked{background:var(--ok);border-color:var(--ok);}
+    .check svg{display:none;width:14px;height:14px;color:#fff;}
+    .check.checked svg{display:block;}
+    .tname{flex:1;font-size:var(--ts);}
+    .tarea{font-size:var(--tx);color:var(--tx-m);display:block;}
+    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s3);}
+    .sec-head h3{font-size:var(--tx);font-weight:600;color:var(--tx-m);text-transform:uppercase;letter-spacing:.06em;}
+    .divider{height:1px;background:var(--dv);margin:var(--s3) 0;}
+
+    /* empty */
+    .empty{padding:var(--s12) var(--s8);text-align:center;border:1px dashed var(--br);border-radius:var(--rl);color:var(--tx-m);}
+    .empty-icon{font-size:2rem;margin-bottom:var(--s2);}
+    .empty p{font-size:var(--ts);}
+
+    /* save pill */
+    .pill{position:fixed;bottom:calc(var(--safe-b) + var(--s4));left:50%;transform:translateX(-50%);background:var(--tx-c);color:var(--bg);padding:.5rem 1.2rem;border-radius:var(--rf);font-size:var(--tx);box-shadow:var(--sh-m);opacity:0;transition:opacity .3s;pointer-events:none;z-index:300;white-space:nowrap;}
+    .pill.show{opacity:1;}
+
+    @media(max-width:480px){
+      .form-row{grid-template-columns:1fr;}
+      .stats{gap:var(--s2);}
+      .stat{padding:var(--s3);}
+      .stat strong{font-size:var(--tb);}
+      .topbar{padding:var(--s3) var(--s4);}
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 11l9-9 9 9"/><path d="M9 22V12h6v10"/>
+        <circle cx="19" cy="7" r="3" fill="currentColor" stroke="none"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <strong>Eats &amp; Places</strong>
+      <small>Food &amp; travel tracker</small>
+    </div>
+  </div>
+  <button class="btn btn-icon btn-ghost" id="themeBtn" aria-label="Toggle theme">
+    <svg id="iSun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <svg id="iMoon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab active" role="tab" data-tab="log">📍 Trip Log <span class="tab-count" id="logCount">0</span></button>
+  <button class="tab" role="tab" data-tab="togo">🍜 To-Go List <span class="tab-count" id="togoCount">0</span></button>
+</nav>
+
+<!-- LOG -->
+<div class="page active" id="page-log">
+  <div class="page-inner">
+    <div class="stats">
+      <div class="stat"><strong id="sDays">0</strong><span>Days</span></div>
+      <div class="stat"><strong id="sPlaces">0</strong><span>Places</span></div>
+      <div class="stat"><strong id="sFood">0</strong><span>Food spots</span></div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Date
+            <input type="date" id="logDate" required>
+          </label>
+          <label>Place / restaurant
+            <input type="text" id="logPlace" placeholder="Name…" autocomplete="off" autocorrect="off">
+          </label>
+        </div>
+
+        <div>
+          <div style="font-size:var(--ts);font-weight:500;margin-bottom:var(--s2)">Quick stay <span class="lbl-sub">— tap to fill</span></div>
+          <div class="quick-row">
+            <button class="qbtn" data-qp="Camili">📍 Camili</button>
+            <button class="qbtn" data-qp="Yagcilar">📍 Yagcilar</button>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:var(--ts);font-weight:500;margin-bottom:var(--s2)">Type</div>
+          <div class="type-chips">
+            <button class="tchip sel" data-val="food">🍽️ Food</button>
+            <button class="tchip" data-val="visit">📍 Visit</button>
+            <button class="tchip" data-val="stay">🏠 Stayed</button>
+            <button class="tchip" data-val="next">📌 Upcoming</button>
+          </div>
+        </div>
+
+        <label><span class="lbl-sub">Notes (optional)</span>
+          <textarea id="logNotes" placeholder="Dish, rating, address, tip…"></textarea>
+        </label>
+
+        <button class="btn btn-primary" id="logSave" style="width:100%;justify-content:center;">Save entry</button>
+      </div>
+    </div>
+
+    <div class="quick-summary" aria-live="polite">
+      <div class="quick-summary-head">
+        <div>
+          <strong>Quick stay record</strong>
+          <span>Auto-updated after each saved stay</span>
+        </div>
+        <div class="quick-summary-total" id="quickStayTotal">0<small>total stays</small></div>
+      </div>
+      <div class="quick-summary-grid" id="quickStaySummary"></div>
+    </div>
+
+    <div class="timeline" id="timeline"></div>
+  </div>
+</div>
+
+<!-- TO-GO -->
+<div class="page" id="page-togo">
+  <div class="page-inner">
+    <div class="sec-head">
+      <h3>Places to visit</h3>
+      <button class="btn btn-ghost" id="clearDone" style="font-size:var(--tx);padding:.4rem .7rem;min-height:32px;">Clear done</button>
+    </div>
+    <div class="togo-form">
+      <input type="text" id="tInput" placeholder="Restaurant or place…" autocomplete="off" autocorrect="off">
+      <input type="text" id="tArea" placeholder="Area / city" class="area-input" autocomplete="off" autocorrect="off">
+      <button class="btn btn-primary" id="tAdd">Add</button>
+    </div>
+    <div class="togo-list" id="togoList"></div>
+  </div>
+</div>
+
+<div class="pill" id="pill">Saved ✓</div>
+
+<script>
+(function(){
+  const K={log:'ep-log-v1',togo:'ep-togo-v1',theme:'ep-theme-v1'};
+  const QUICK_STAYS=['Camili','Yagcilar'];
+  let log=[],togo=[],selType='food';
+  const root=document.documentElement;
+
+  /* ─ storage ─ */
+  function ls(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+  function ll(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
+
+  /* ─ toast ─ */
+  function toast(){const p=document.getElementById('pill');p.classList.add('show');clearTimeout(p._t);p._t=setTimeout(()=>p.classList.remove('show'),1800);}
+
+  /* ─ theme ─ */
+  function applyTheme(t){
+    root.setAttribute('data-theme',t);
+    document.getElementById('iSun').style.display=t==='dark'?'':'none';
+    document.getElementById('iMoon').style.display=t==='dark'?'none':'';
+  }
+  (function(){const s=ll(K.theme);applyTheme(s||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));})();
+  document.getElementById('themeBtn').addEventListener('click',()=>{
+    const n=root.getAttribute('data-theme')==='dark'?'light':'dark';
+    applyTheme(n);ls(K.theme,n);
+  });
+
+  /* ─ tabs ─ */
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      document.querySelectorAll('.tab,.page').forEach(el=>el.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('page-'+t.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ─ type chips ─ */
+  document.querySelectorAll('.tchip').forEach(c=>{
+    c.addEventListener('click',()=>{
+      document.querySelectorAll('.tchip').forEach(x=>x.classList.remove('sel'));
+      c.classList.add('sel');selType=c.dataset.val;
+    });
+  });
+
+  /* ─ quick stay ─ */
+  document.querySelectorAll('[data-qp]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.getElementById('logPlace').value=b.dataset.qp;
+      document.querySelectorAll('.tchip').forEach(x=>x.classList.remove('sel'));
+      document.querySelector('.tchip[data-val="stay"]').classList.add('sel');
+      selType='stay';
+      document.querySelectorAll('[data-qp]').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+    });
+  });
+
+  /* ─ log helpers ─ */
+  const TL={food:'🍽️ Food',visit:'📍 Visit',stay:'🏠 Stayed',next:'📌 Upcoming'};
+  const TB={food:'bf',visit:'bv',stay:'bs',next:'bn'};
+  const fmtDate=v=>{const d=new Date(v+'T00:00:00');return d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});};
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  function renderLog(){
+    const tl=document.getElementById('timeline');
+    document.getElementById('logCount').textContent=log.length;
+    document.getElementById('sPlaces').textContent=log.length;
+    const ud=new Set(log.map(e=>e.date));
+    document.getElementById('sDays').textContent=ud.size;
+    document.getElementById('sFood').textContent=log.filter(e=>e.type==='food').length;
+    const quickStayCounts=QUICK_STAYS.map(place=>{
+      const entries=log.filter(e=>e.type==='stay'&&e.place===place);
+      const latest=entries.length?entries[entries.length-1].date:null;
+      return {place,count:entries.length,latest};
+    });
+    document.getElementById('quickStayTotal').innerHTML=`${quickStayCounts.reduce((sum,item)=>sum+item.count,0)}<small>total stays</small>`;
+    const quickStaySummary=document.getElementById('quickStaySummary');
+    quickStaySummary.innerHTML=quickStayCounts.some(item=>item.count)?quickStayCounts.map(item=>`<div class="quick-record">
+      <strong>${esc(item.place)}</strong>
+      <span>${item.count} stay${item.count===1?'':'s'}${item.latest?' · last '+fmtDate(item.latest):''}</span>
+    </div>`).join(''):'<div class="quick-summary-empty">No quick stays yet. Tap Camili or Yagcilar, then save the entry.</div>';
+    if(!log.length){tl.innerHTML='<div class="empty"><div class="empty-icon">📍</div><p>No entries yet. Add your first place above.</p></div>';return;}
+    const g=log.reduce((a,e)=>{(a[e.date]||=[]).push(e);return a;},{});
+    const days=Object.keys(g).sort((a,b)=>b.localeCompare(a));
+    tl.innerHTML=days.map(date=>{
+      const items=g[date];
+      return`<article class="day-card">
+        <div class="day-head">
+          <div class="day-date"><strong>${fmtDate(date)}</strong><small>${items.length} place${items.length>1?'s':''}</small></div>
+          <div class="badges">${[...new Set(items.map(i=>i.type))].map(t=>`<span class="badge ${TB[t]}">${TL[t]}</span>`).join('')}</div>
+        </div>
+        <div class="day-body">
+          ${items.map(item=>`<div class="place-item">
+            <div class="place-info">
+              <strong>${esc(item.place)}</strong>
+              <small>${TL[item.type]}${item.notes?' · '+esc(item.notes):''}</small>
+            </div>
+            <button class="del-btn" data-lid="${item.id}" aria-label="Delete">✕</button>
+          </div>`).join('')}
+        </div>
+      </article>`;
+    }).join('');
+    tl.querySelectorAll('[data-lid]').forEach(b=>{
+      b.addEventListener('click',()=>{log=log.filter(e=>e.id!==b.dataset.lid);ls(K.log,log);toast();renderLog();});
+    });
+  }
+
+  document.getElementById('logSave').addEventListener('click',()=>{
+    const date=document.getElementById('logDate').value;
+    const place=document.getElementById('logPlace').value.trim();
+    const notes=document.getElementById('logNotes').value.trim();
+    if(!date){document.getElementById('logDate').focus();return;}
+    if(!place){document.getElementById('logPlace').focus();return;}
+    log.push({id:crypto.randomUUID(),date,place,type:selType,notes});
+    log.sort((a,b)=>a.date.localeCompare(b.date));
+    ls(K.log,log);toast();
+    document.getElementById('logPlace').value='';
+    document.getElementById('logNotes').value='';
+    document.querySelectorAll('[data-qp]').forEach(x=>x.classList.remove('sel'));
+    renderLog();
+  });
+
+  /* ─ togo ─ */
+  function renderTogo(){
+    const list=document.getElementById('togoList');
+    const pending=togo.filter(i=>!i.done);
+    document.getElementById('togoCount').textContent=pending.length;
+    if(!togo.length){list.innerHTML='<div class="empty"><div class="empty-icon">🍜</div><p>Your wishlist is empty. Add restaurants or places above.</p></div>';return;}
+    const ri=item=>`<div class="togo-item${item.done?' done':''}" data-tid="${item.id}">
+      <button class="check${item.done?' checked':''}" data-chk="${item.id}" aria-label="Mark done">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+      </button>
+      <div style="flex:1;min-width:0;">
+        <div class="tname">${esc(item.name)}</div>
+        ${item.area?`<small class="tarea">${esc(item.area)}</small>`:''}
+      </div>
+      <button class="del-btn" data-tdel="${item.id}" aria-label="Delete">✕</button>
+    </div>`;
+    const done=togo.filter(i=>i.done);
+    list.innerHTML=pending.map(ri).join('')+(done.length?'<div class="divider"></div>'+done.map(ri).join(''):'');
+    list.querySelectorAll('[data-chk]').forEach(b=>{
+      b.addEventListener('click',()=>{const i=togo.find(x=>x.id===b.dataset.chk);if(i){i.done=!i.done;ls(K.togo,togo);renderTogo();}});
+    });
+    list.querySelectorAll('[data-tdel]').forEach(b=>{
+      b.addEventListener('click',()=>{togo=togo.filter(i=>i.id!==b.dataset.tdel);ls(K.togo,togo);toast();renderTogo();});
+    });
+  }
+
+  function addTogo(){
+    const name=document.getElementById('tInput').value.trim();
+    const area=document.getElementById('tArea').value.trim();
+    if(!name){document.getElementById('tInput').focus();return;}
+    togo.unshift({id:crypto.randomUUID(),name,area,done:false});
+    ls(K.togo,togo);toast();
+    document.getElementById('tInput').value='';
+    document.getElementById('tArea').value='';
+    renderTogo();
+  }
+  document.getElementById('tAdd').addEventListener('click',addTogo);
+  document.getElementById('tInput').addEventListener('keydown',e=>{if(e.key==='Enter')addTogo();});
+  document.getElementById('tArea').addEventListener('keydown',e=>{if(e.key==='Enter')addTogo();});
+  document.getElementById('clearDone').addEventListener('click',()=>{togo=togo.filter(i=>!i.done);ls(K.togo,togo);toast();renderTogo();});
+
+  /* ─ init ─ */
+  log=ll(K.log)||[];
+  togo=ll(K.togo)||[];
+  document.getElementById('logDate').value=new Date().toISOString().split('T')[0];
+  renderLog();
+  renderTogo();
+})();
+</script>
+</body>
+</html>
